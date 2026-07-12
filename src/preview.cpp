@@ -194,6 +194,7 @@ PreviewData extract_file_preview(rust::Str file_path) {
         try {
             uint64_t entry_count = 0;
             for (const auto& entry : std::filesystem::directory_iterator(path)) {
+                (void)entry;
                 entry_count++;
             }
             std::ostringstream meta;

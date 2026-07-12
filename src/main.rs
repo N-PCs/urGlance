@@ -15,7 +15,7 @@ mod ffi {
 
 use std::fs::File;
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use tokio::task::JoinHandle;
 use tokio::time::{sleep, Duration};
