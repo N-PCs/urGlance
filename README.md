@@ -18,3 +18,5 @@ A high-performance, responsive file manager and organizer utility designed to pr
 git clone https://github.com/N-PCs/urGlance.git
 cd urGlance
 ```
+
+Made by @N-PCs for the world!
