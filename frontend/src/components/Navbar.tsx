@@ -17,12 +17,12 @@ export function Navbar() {
               strokeLinejoin="round"
               fill="none"
             />
-            <circle cx="16" cy="12" r="2" fill="#a78bfa" />
+                <circle cx="16" cy="12" r="2" fill="#5b9dff" />
             <defs>
-              <linearGradient id="nav-g" x1="0" y1="0" x2="32" y2="32">
-                <stop stopColor="#a78bfa" />
-                <stop offset="1" stopColor="#06b6d4" />
-              </linearGradient>
+               <linearGradient id="nav-g" x1="0" y1="0" x2="32" y2="32">
+                 <stop stopColor="#5b9dff" />
+                 <stop offset="1" stopColor="#3b82f6" />
+               </linearGradient>
             </defs>
           </svg>
           <span className="gradient-text">urGlance</span>
