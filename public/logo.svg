@@ -1,0 +1,12 @@
+<svg width="225" height="136" viewBox="0 0 225 136" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="225" height="135" rx="20" transform="matrix(-1 0 0 1 225 0)" fill="#D9D9D9"/>
+<path d="M168.216 98.637C146.887 103.105 125 73.792 125 73.792L163.628 49.0001C163.628 49.0001 189.545 94.1688 168.216 98.637Z" fill="black"/>
+<path d="M161.723 87.425C148.326 89.4992 133.056 68.6217 133.056 68.6217L156.568 53.5313C156.568 53.5313 175.12 85.3508 161.723 87.425Z" fill="#28FFF4"/>
+<path d="M105.5 89C204.5 138 179.983 98.406 192.983 29.0001" stroke="black" stroke-width="15"/>
+<line x1="105.308" y1="83.1729" x2="211.421" y2="19.6658" stroke="black" stroke-width="20"/>
+<line x1="100.892" y1="83.7555" x2="155.396" y2="51.1355" stroke="#5B9DFF" stroke-width="16"/>
+<line x1="100.5" y1="29" x2="100.5" y2="119" stroke="#5B9DFF" stroke-width="25"/>
+<line x1="80.5" y1="29" x2="80.5" y2="119" stroke="black" stroke-width="25"/>
+<line x1="12" y1="106.5" x2="92" y2="106.5" stroke="black" stroke-width="25"/>
+<line x1="24.5" y1="29" x2="24.5" y2="119" stroke="black" stroke-width="25"/>
+</svg>
