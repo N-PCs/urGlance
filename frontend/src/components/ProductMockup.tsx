@@ -42,7 +42,7 @@ export function ProductMockup() {
           <div className="mockup-nav-item"><Folder size={15} /> Downloads</div>
           <div className="mockup-nav-item"><Folder size={15} /> Pictures</div>
           <h5 style={{ marginTop: '1rem' }}>Drives</h5>
-          <div className="mockup-nav-item"><HardDrive size={15} /> Macintosh HD</div>
+          <div className="mockup-nav-item"><HardDrive size={15} /> Local Disk (C:)</div>
         </aside>
 
         {/* File list */}

@@ -19,7 +19,7 @@ const features = [
     icon: <Shield size={22} />,
     title: 'Zero Dependencies',
     description:
-      'Ships as a single static binary. No runtime, no framework, no install wizard — just drop and run on any system.',
+      'Ships as a single static binary for Windows & Linux. No runtime, no framework, no install wizard — just drop and run.',
   },
   {
     icon: <Cpu size={22} />,

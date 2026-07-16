@@ -1,0 +1,102 @@
+import { CheckBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+export struct PreviewRecord {
+    file_path: string,
+    file_type: string,
+    snippet: string,
+}
+
+export component AppWindow inherits Window {
+    title: "urGlance Control Panel";
+    width: 600px;
+    height: 500px;
+    background: #ffffff;
+    
+    in property <bool> startup_enabled: false;
+    in property <[PreviewRecord]> preview_history: [];
+    
+    callback toggle_startup(bool);
+
+    VerticalBox {
+        padding: 24px;
+        spacing: 16px;
+
+        Text {
+            text: "urGlance Background Service";
+            font-size: 24px;
+            font-weight: 700;
+            color: #333333;
+        }
+        
+        HorizontalBox {
+            spacing: 8px;
+            Text {
+                text: "Run on System Startup:";
+                vertical-alignment: center;
+                font-size: 16px;
+                color: #555555;
+            }
+            CheckBox {
+                checked: root.startup_enabled;
+                toggled => {
+                    root.toggle_startup(self.checked);
+                }
+            }
+        }
+        
+        Rectangle {
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        Text {
+            text: "Recent Previews:";
+            font-size: 18px;
+            font-weight: 600;
+            color: #444444;
+        }
+
+        ScrollView {
+            VerticalBox {
+                spacing: 12px;
+                for record in root.preview_history : Rectangle {
+                    background: #f8f9fa;
+                    border-radius: 8px;
+                    border-color: #e9ecef;
+                    border-width: 1px;
+                    
+                    VerticalBox {
+                        padding: 12px;
+                        spacing: 4px;
+                        
+                        Text {
+                            text: record.file_path;
+                            font-weight: 600;
+                            font-size: 14px;
+                            color: #212529;
+                            overflow: elide;
+                        }
+                        Text {
+                            text: record.file_type;
+                            color: #6c757d;
+                            font-size: 12px;
+                        }
+                        Text {
+                            text: record.snippet;
+                            wrap: word-wrap;
+                            color: #495057;
+                            font-size: 13px;
+                        }
+                    }
+                }
+                
+                if root.preview_history.length == 0 : Text {
+                    text: "No previews yet. Hover over files to see them here.";
+                    color: #999999;
+                    font-style: italic;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+    }
+}

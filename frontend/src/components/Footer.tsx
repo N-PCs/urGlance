@@ -9,29 +9,12 @@ export function Footer() {
           {/* Brand */}
           <div className="footer-brand">
             <div className="navbar-logo">
-              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
-                <circle cx="16" cy="16" r="14" stroke="url(#ft-g)" strokeWidth="2.5" />
-                <path
-                  d="M10 20l6-12 6 12"
-                  stroke="url(#ft-g)"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill="none"
-                />
-                <circle cx="16" cy="12" r="2" fill="#5b9dff" />
-                <defs>
-                  <linearGradient id="ft-g" x1="0" y1="0" x2="32" y2="32">
-                    <stop stopColor="#5b9dff" />
-                    <stop offset="1" stopColor="#3b82f6" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <span className="gradient-text">urGlance</span>
+              <span className="gradient-text">          <img src="/logo.png" alt="urGlance Logo" width={70} height={40} />
+urGlance</span>
             </div>
             <p>
-              A high-performance file organizer with instant preview extraction,
-              powered by a hybrid Rust + C++ engine.
+              A high-performance file organizer for Windows &amp; Linux with instant
+              preview extraction, powered by a hybrid Rust + C++ engine.
             </p>
           </div>
 

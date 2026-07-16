@@ -1,28 +1,25 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Download, Monitor, Apple, Terminal } from 'lucide-react';
+import { Download, Monitor, Terminal } from 'lucide-react';
 
 const platforms = [
   {
     icon: <Monitor size={28} />,
     name: 'Windows',
-    description: 'Single .exe — no installer required. Just download and run.',
-    buttonText: 'Download .exe',
-    fileName: 'urglance-x86_64-windows.exe',
-  },
-  {
-    icon: <Apple size={28} />,
-    name: 'macOS',
-    description: 'Universal binary for Apple Silicon and Intel Macs.',
-    buttonText: 'Download .dmg',
-    fileName: 'urglance-universal-macos.dmg',
+    description: 'Portable archive. Extract and run the executable.',
+    options: [
+      { text: 'Download .zip', file: '/downloads/urglance-windows.zip' }
+    ]
   },
   {
     icon: <Terminal size={28} />,
     name: 'Linux',
-    description: 'Available as .deb, .rpm, and a static musl binary.',
-    buttonText: 'Download .tar.gz',
-    fileName: 'urglance-x86_64-linux.tar.gz',
+    description: 'Available as a static binary or standard system packages.',
+    options: [
+      { text: '.tar.gz', file: '/downloads/urglance-linux.tar.gz' },
+      { text: '.deb (Ubuntu/Debian)', file: '/downloads/urglance-linux.deb' },
+      { text: '.rpm (Fedora/RHEL)', file: '/downloads/urglance-linux.rpm' }
+    ]
   },
 ];
 
@@ -48,8 +45,8 @@ export function Downloads() {
             Get <span className="gradient-text">urGlance</span>
           </h2>
           <p className="section-subtitle">
-            One binary — every platform. No runtime dependencies, no install
-            wizard, no bloat. Just drop it and go.
+            One binary — Windows &amp; Linux only. No runtime dependencies, no
+            install wizard, no bloat. Just drop it and go.
           </p>
         </div>
 
@@ -67,13 +64,20 @@ export function Downloads() {
               <div className="download-icon">{platform.icon}</div>
               <h3>{platform.name}</h3>
               <p>{platform.description}</p>
-              <a
-                href={`https://github.com/N-PCs/urGlance/releases/latest/download/${platform.fileName}`}
-                className="btn-primary"
-              >
-                <Download size={16} />
-                {platform.buttonText}
-              </a>
+              <div className="download-options" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%', marginTop: 'auto' }}>
+                {platform.options.map((opt) => (
+                  <a
+                    key={opt.text}
+                    href={opt.file}
+                    download
+                    className="btn-primary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                  >
+                    <Download size={16} />
+                    {opt.text}
+                  </a>
+                ))}
+              </div>
             </motion.div>
           ))}
         </div>

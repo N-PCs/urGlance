@@ -23,9 +23,7 @@ export function Hero() {
           </h1>
 
           <p className="hero-subtitle">
-            A fast, dependency-free file organizer that previews any file the
-            instant you hover — text, code, or images. Built for zero-latency
-            file intelligence on every platform.
+            Run it once, and it registers as a lightweight startup app that works silently in the background. Hover over any file to get an instant preview — text, code, or images. Built for zero-latency file intelligence on Windows &amp; Linux.
           </p>
 
           <motion.div

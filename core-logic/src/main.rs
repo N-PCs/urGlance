@@ -21,6 +21,8 @@ use tokio::sync::oneshot;
 use tokio::task::JoinHandle;
 use tokio::time::{sleep, Duration};
 
+slint::include_modules!();
+
 /// Thread-safe manager to coordinate file hover interactions,
 /// enforce debouncing, and handle task cancellation.
 pub struct HoverPreviewManager {
@@ -305,7 +307,7 @@ fn url_decode(s: &str) -> String {
     decoded
 }
 
-async fn start_server(manager: Arc<HoverPreviewManager>) {
+async fn start_server(manager: Arc<HoverPreviewManager>, ui_handle: slint::Weak<AppWindow>) {
     let addr = "127.0.0.1:8080";
     let listener = match TcpListener::bind(addr).await {
         Ok(l) => l,
@@ -328,6 +330,7 @@ async fn start_server(manager: Arc<HoverPreviewManager>) {
         };
         
         let manager_clone = Arc::clone(&manager);
+        let ui_handle_clone = ui_handle.clone();
         
         tokio::spawn(async move {
             let mut buffer = [0; 8192];
@@ -475,11 +478,33 @@ async fn start_server(manager: Arc<HoverPreviewManager>) {
                 let (status_line, json_str) = match rx.await {
                     Ok(Some(preview_data)) => {
                         let res = PreviewDataResponse {
-                            file_type: preview_data.file_type.to_string(),
-                            content_snippet: preview_data.content_snippet.to_string(),
-                            metadata_summary: preview_data.metadata_summary.to_string(),
+                            file_type: preview_data.file_type.clone(),
+                            content_snippet: preview_data.content_snippet.clone(),
+                            metadata_summary: preview_data.metadata_summary.clone(),
                             success: preview_data.success,
                         };
+                        
+                        let ui_weak = ui_handle_clone.clone();
+                        let p_path = param_path.clone();
+                        let p_type = preview_data.file_type.clone();
+                        let p_snippet = preview_data.content_snippet.clone();
+                        
+                        let _ = slint::invoke_from_event_loop(move || {
+                            if let Some(ui) = ui_weak.upgrade() {
+                                let mut history: Vec<PreviewRecord> = ui.get_preview_history().iter().collect();
+                                history.insert(0, PreviewRecord {
+                                    file_path: p_path.into(),
+                                    file_type: p_type.into(),
+                                    snippet: p_snippet.into(),
+                                });
+                                if history.len() > 50 {
+                                    history.pop();
+                                }
+                                let model = std::rc::Rc::new(slint::VecModel::from(history));
+                                ui.set_preview_history(model.into());
+                            }
+                        });
+                        
                         ("HTTP/1.1 200 OK", serde_json::to_string(&res).unwrap_or_default())
                     }
                     _ => {
@@ -546,10 +571,31 @@ async fn start_server(manager: Arc<HoverPreviewManager>) {
     }
 }
 
-#[tokio::main]
-async fn main() {
-    let manager = Arc::new(HoverPreviewManager::new());
+fn main() -> Result<(), slint::PlatformError> {
+    let ui = AppWindow::new()?;
     
-    // Serve background web server
-    start_server(manager).await;
+    ui.set_startup_enabled(is_startup_enabled());
+    
+    ui.on_toggle_startup({
+        move |enabled| {
+            if enabled {
+                let _ = register_startup();
+            } else {
+                let _ = unregister_startup();
+            }
+        }
+    });
+
+    let manager = Arc::new(HoverPreviewManager::new());
+    let ui_handle = ui.as_weak();
+    
+    // Spawn tokio runtime in a background thread
+    std::thread::spawn(move || {
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(async {
+            start_server(manager, ui_handle).await;
+        });
+    });
+
+    ui.run()
 }
