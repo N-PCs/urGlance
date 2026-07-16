@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { color, motion } from 'framer-motion';
 import { Download } from 'lucide-react';
 import { ProductMockup } from './ProductMockup';
 
@@ -12,9 +12,8 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="hero-eyebrow">
-            <span className="dot" />
-            Hybrid Rust + C++ Engine
+          <div className="hero-eyebrow" style={{background:"white", color:"black"}}>
+            Hybrid Rust & C++ Engine
           </div>
 
           <h1 className="hero-title">
