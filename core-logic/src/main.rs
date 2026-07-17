@@ -1,4 +1,4 @@
-#[cxx::bridge(namespace = "urfileorganizer")]
+#[cxx::bridge(namespace = "urglance")]
 mod ffi {
     struct PreviewData {
         file_type: String,
@@ -8,7 +8,7 @@ mod ffi {
     }
 
     unsafe extern "C++" {
-        include!("urfileorganizer/src/preview.h");
+        include!("urglance/src/preview.h");
         fn extract_file_preview(file_path: &str) -> PreviewData;
     }
 }
@@ -20,6 +20,7 @@ use tokio::net::TcpListener;
 use tokio::sync::oneshot;
 use tokio::task::JoinHandle;
 use tokio::time::{sleep, Duration};
+use slint::Model;
 
 slint::include_modules!();
 
@@ -151,7 +152,7 @@ fn register_startup() -> Result<(), String> {
                 "add",
                 "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                 "/v",
-                "urFileOrganizer",
+                "urGlance",
                 "/t",
                 "REG_SZ",
                 "/d",
@@ -179,7 +180,7 @@ fn register_startup() -> Result<(), String> {
         std::fs::create_dir_all(&autostart_dir)
             .map_err(|e| format!("Failed to create autostart directory: {}", e))?;
             
-        let desktop_file = autostart_dir.join("urfileorganizer.desktop");
+        let desktop_file = autostart_dir.join("urGlance.desktop");
         let current_exe = std::env::current_exe()
             .map_err(|e| format!("Failed to get current exe path: {}", e))?;
         let exe_str = current_exe.to_str()
@@ -188,7 +189,7 @@ fn register_startup() -> Result<(), String> {
         let content = format!(
             "[Desktop Entry]\n\
              Type=Application\n\
-             Name=urFileOrganizer\n\
+             Name=urGlance\n\
              Comment=Core backend file preview daemon\n\
              Exec={}\n\
              Terminal=false\n\
@@ -216,7 +217,7 @@ fn unregister_startup() -> Result<(), String> {
                 "delete",
                 "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                 "/v",
-                "urFileOrganizer",
+                "urGlance",
                 "/f"
             ])
             .status()
@@ -236,7 +237,7 @@ fn unregister_startup() -> Result<(), String> {
         let desktop_file = std::path::PathBuf::from(home)
             .join(".config")
             .join("autostart")
-            .join("urfileorganizer.desktop");
+            .join("urGlance.desktop");
             
         if desktop_file.exists() {
             std::fs::remove_file(desktop_file)
@@ -259,7 +260,7 @@ fn is_startup_enabled() -> bool {
                 "query",
                 "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
                 "/v",
-                "urFileOrganizer"
+                "urGlance"
             ])
             .output();
         match output {
@@ -274,7 +275,7 @@ fn is_startup_enabled() -> bool {
             let desktop_file = std::path::PathBuf::from(home)
                 .join(".config")
                 .join("autostart")
-                .join("urfileorganizer.desktop");
+                .join("urGlance.desktop");
             desktop_file.exists()
         } else {
             false
@@ -318,7 +319,7 @@ async fn start_server(manager: Arc<HoverPreviewManager>, ui_handle: slint::Weak<
     };
     
     println!("\n========================================================");
-    println!("  urFileOrganizer Background Service Running.");
+    println!("  urGlance Background Service Running.");
     println!("  Access Glassmorphic UI Dashboard at: http://{}", addr);
     println!("  Press Ctrl+C to stop the daemon.");
     println!("========================================================\n");
@@ -472,7 +473,7 @@ async fn start_server(manager: Arc<HoverPreviewManager>, ui_handle: slint::Weak<
                     }
                 }
                 
-                let target_path = PathBuf::from(param_path);
+                let target_path = PathBuf::from(&param_path);
                 let rx = manager_clone.handle_hover(target_path);
                 
                 let (status_line, json_str) = match rx.await {

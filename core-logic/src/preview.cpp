@@ -1,5 +1,5 @@
-#include "urfileorganizer/src/preview.h"
-#include "urfileorganizer/src/main.rs.h"
+#include "urglance/src/preview.h"
+#include "urglance/src/main.rs.h"
 
 #include <iostream>
 #include <fstream>
@@ -10,7 +10,7 @@
 #include <cctype>
 #include <cmath>
 
-namespace urfileorganizer {
+namespace urglance {
 
 // Format bytes into human-readable size
 std::string format_size(uint64_t bytes) {
@@ -327,4 +327,4 @@ PreviewData extract_file_preview(rust::Str file_path) {
     return data;
 }
 
-} // namespace urfileorganizer
+} // namespace urglance

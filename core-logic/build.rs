@@ -9,7 +9,7 @@ fn main() {
         build.flag_if_supported("-std=c++17");
     }
     
-    build.compile("urfileorganizer");
+    build.compile("urglance");
 
     slint_build::compile("ui/appwindow.slint").unwrap();
 
