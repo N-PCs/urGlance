@@ -1,6 +1,6 @@
 # urGlance
 
-A high-performance, responsive file manager and organizer utility designed to provide lightning-fast file previews and seamless system integration.
+A high-performance, responsive utility designed to provide lightning-fast file previews and seamless system integration.
 
 ## Features
 - **Instant Previews**: Fast file lookups and preview extraction via a background daemon.
