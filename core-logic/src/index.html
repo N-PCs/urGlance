@@ -1,837 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>urGlance - Background Dashboard</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root {
-            --bg-color: #08090d;
-            --panel-bg: rgba(18, 20, 29, 0.6);
-            --panel-border: rgba(255, 255, 255, 0.08);
-            --accent-primary: #8b5cf6;
-            --accent-secondary: #ec4899;
-            --accent-glow: rgba(139, 92, 246, 0.3);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --text-dark: #4b5563;
-            --success: #10b981;
-            --error: #ef4444;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>urGlance Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root {
+    --bg: #08090d;
+    --panel: rgba(18,20,29,0.6);
+    --border: rgba(255,255,255,0.08);
+    --accent: #8b5cf6;
+    --accent2: #ec4899;
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+    --success: #10b981;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg); color: var(--text); height: 100vh; overflow: hidden;
+    display: flex; flex-direction: column;
+    background-image: radial-gradient(at 0% 0%, rgba(139,92,246,0.12) 0px, transparent 50%),
+                      radial-gradient(at 100% 100%, rgba(236,72,153,0.08) 0px, transparent 50%);
+}
+header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+    background: rgba(8,9,13,0.8); backdrop-filter: blur(8px); z-index: 10;
+}
+.logo-group { display: flex; align-items: center; gap: 0.75rem; }
+.logo-icon {
+    width: 2rem; height: 2rem; border-radius: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 12px rgba(139,92,246,0.3);
+}
+.logo-text h1 { font-size: 1.1rem; font-weight: 700; background: linear-gradient(to right,#fff,#d1d5db); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo-text span { font-size: 0.7rem; color: var(--muted); }
+.status-badge {
+    display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 500;
+    background: rgba(16,185,129,0.1); color: var(--success); padding: 0.3rem 0.7rem;
+    border-radius: 100px; border: 1px solid rgba(16,185,129,0.2);
+}
+.status-dot { width: 7px; height: 7px; background: var(--success); border-radius: 50%; box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+}
+.workspace { display: flex; flex: 1; overflow: hidden; padding: 1rem; gap: 1rem; }
+.explorer-panel {
+    flex: 1.3; background: var(--panel); border: 1px solid var(--border);
+    backdrop-filter: blur(16px); border-radius: 1rem; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+}
+.path-navigation { display: flex; gap: 0.4rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); align-items: center; }
+.nav-btn {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text);
+    width: 2rem; height: 2rem; border-radius: 0.4rem; cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); }
+.path-input-wrapper { flex: 1; }
+.path-input {
+    width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+    border-radius: 0.4rem; padding: 0.45rem 0.85rem; color: var(--text); font-family: inherit;
+    font-size: 0.82rem; transition: all 0.2s ease;
+}
+.path-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 8px rgba(139,92,246,0.15); }
+.file-list-container { flex: 1; overflow-y: auto; padding: 0.4rem; }
+.file-list-container::-webkit-scrollbar { width: 5px; }
+.file-list-container::-webkit-scrollbar-track { background: transparent; }
+.file-list-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 100px; }
+.file-item {
+    display: flex; align-items: center; padding: 0.55rem 0.75rem; border-radius: 0.4rem;
+    cursor: pointer; transition: all 0.15s ease; border: 1px solid transparent; margin-bottom: 0.15rem;
+}
+.file-item:hover { background: rgba(255,255,255,0.03); border-color: var(--border); transform: translateX(2px); }
+.file-item.active { background: linear-gradient(90deg, rgba(139,92,246,0.12) 0%, rgba(236,72,153,0.04) 100%); border-color: rgba(139,92,246,0.25); }
+.file-icon { margin-right: 0.6rem; color: var(--accent); flex-shrink: 0; display: flex; }
+.file-info { flex: 1; min-width: 0; }
+.file-name { font-size: 0.82rem; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-meta-sub { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* Preview panel */
+.preview-panel {
+    flex: 1; background: var(--panel); border: 1px solid var(--border);
+    backdrop-filter: blur(16px); border-radius: 1rem; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+}
+.preview-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.preview-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.preview-content { flex: 1; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; }
+.empty-preview-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--muted); gap: 0.75rem; }
+.empty-preview-icon {
+    width: 3.5rem; height: 3.5rem; border-radius: 50%;
+    background: rgba(255,255,255,0.02); border: 1px dashed var(--border);
+    display: flex; align-items: center; justify-content: center; color: #4b5563;
+}
+.file-badge-container { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.file-badge {
+    font-size: 0.68rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.3rem;
+    display: flex; align-items: center; gap: 0.3rem;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--muted);
+}
+.file-badge.type { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.15); color: #a78bfa; }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
-        }
+/* Preview image */
+.preview-image-wrapper {
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.3); border-radius: 0.5rem; border: 1px solid var(--border);
+    min-height: 200px; max-height: 400px; overflow: hidden;
+}
+.preview-image-wrapper img {
+    max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 0.4rem;
+}
 
-        /* Header */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1.25rem 2rem;
-            border-bottom: 1px solid var(--panel-border);
-            background: rgba(8, 9, 13, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 10;
-        }
+.snippet-card { flex: 1; min-height: 150px; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 0.5rem; display: flex; flex-direction: column; overflow: hidden; }
+.snippet-header { background: rgba(255,255,255,0.02); padding: 0.4rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+.snippet-body {
+    flex: 1; padding: 0.85rem; margin: 0; overflow: auto;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; line-height: 1.5;
+    color: #e5e7eb; white-space: pre-wrap; word-break: break-all;
+}
+.snippet-body.binary { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--muted); gap: 0.5rem; font-family: inherit; }
 
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo-icon {
-            width: 2.25rem;
-            height: 2.25rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .logo-text h1 {
-            font-size: 1.15rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            background: linear-gradient(to right, #ffffff, #d1d5db);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-text span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .system-status {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            padding: 0.35rem 0.75rem;
-            border-radius: 100px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--success);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Main Workspace Layout */
-        .workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 1.5rem;
-            gap: 1.5rem;
-        }
-
-        /* Left Side: File Explorer */
-        .explorer-panel {
-            flex: 1.3;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            backdrop-filter: blur(16px);
-            border-radius: 1rem;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .path-navigation {
-            display: flex;
-            gap: 0.5rem;
-            padding: 1rem;
-            border-bottom: 1px solid var(--panel-border);
-            align-items: center;
-        }
-
-        .nav-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--panel-border);
-            color: var(--text-main);
-            width: 2.25rem;
-            height: 2.25rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-primary);
-        }
-
-        .path-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        .path-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--panel-border);
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            color: var(--text-main);
-            font-family: inherit;
-            font-size: 0.85rem;
-            transition: all 0.2s ease;
-        }
-
-        .path-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .file-list-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .file-list-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .file-list-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .file-list-container::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 100px;
-        }
-        .file-list-container::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            padding: 0.65rem 0.85rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
-            margin-bottom: 0.25rem;
-            user-select: none;
-        }
-
-        .file-item:hover {
-            background: rgba(255, 255, 255, 0.03);
-            border-color: var(--panel-border);
-            transform: translateX(2px);
-        }
-
-        .file-item.active {
-            background: linear-gradient(90deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-
-        .file-item.active .file-icon {
-            color: var(--accent-secondary);
-        }
-
-        .file-icon {
-            margin-right: 0.75rem;
-            color: var(--accent-primary);
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .file-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .file-name {
-            font-size: 0.85rem;
-            font-weight: 500;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .file-meta-sub {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 0.15rem;
-        }
-
-        /* Right Side: Side Preview Panel */
-        .preview-panel {
-            flex: 1;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            backdrop-filter: blur(16px);
-            border-radius: 1rem;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .preview-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--panel-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .preview-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-
-        .preview-content {
-            flex: 1;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            overflow-y: auto;
-        }
-
-        .empty-preview-state {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--text-muted);
-            gap: 1rem;
-        }
-
-        .empty-preview-icon {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px dashed var(--panel-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-dark);
-        }
-
-        .file-badge-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .file-badge {
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.35rem;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--panel-border);
-            color: var(--text-muted);
-        }
-
-        .file-badge.type {
-            background: rgba(139, 92, 246, 0.1);
-            border-color: rgba(139, 92, 246, 0.2);
-            color: #a78bfa;
-        }
-
-        .snippet-card {
-            flex: 1;
-            min-height: 200px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--panel-border);
-            border-radius: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .snippet-header {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid var(--panel-border);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .snippet-body {
-            flex: 1;
-            padding: 1rem;
-            margin: 0;
-            overflow: auto;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.78rem;
-            line-height: 1.5;
-            color: #e5e7eb;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .snippet-body.binary {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: var(--text-muted);
-            gap: 0.5rem;
-        }
-
-        /* Footer Settings Panel */
-        .settings-footer {
-            margin-top: auto;
-            padding: 1rem 1.5rem;
-            background: rgba(8, 9, 13, 0.6);
-            border-top: 1px solid var(--panel-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.8rem;
-        }
-
-        .settings-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 2.5rem;
-            height: 1.35rem;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .3s;
-            border-radius: 34px;
-            border: 1px solid var(--panel-border);
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 0.95rem;
-            width: 0.95rem;
-            left: 0.15rem;
-            bottom: 0.1rem;
-            background-color: var(--text-main);
-            transition: .3s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--accent-primary);
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(1.15rem);
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: rgba(18, 20, 29, 0.9);
-            border: 1px solid var(--panel-border);
-            backdrop-filter: blur(10px);
-            padding: 0.75rem 1.25rem;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transform: translateY(150%);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 100;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-        }
-    </style>
+.settings-footer {
+    margin-top: auto; padding: 0.85rem 1.25rem; background: rgba(8,9,13,0.6);
+    border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem;
+}
+.switch { position: relative; display: inline-block; width: 2.2rem; height: 1.25rem; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.08); transition: .3s; border-radius: 34px; border: 1px solid var(--border); }
+.slider:before { position: absolute; content: ""; height: 0.85rem; width: 0.85rem; left: 0.15rem; bottom: 0.1rem; background: var(--text); transition: .3s; border-radius: 50%; }
+input:checked + .slider { background: var(--accent); box-shadow: 0 0 8px rgba(139,92,246,0.3); }
+input:checked + .slider:before { transform: translateX(1rem); }
+.toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; background: rgba(18,20,29,0.92);
+    border: 1px solid var(--border); backdrop-filter: blur(10px); padding: 0.65rem 1rem;
+    border-radius: 0.5rem; display: flex; align-items: center; gap: 0.6rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100;
+}
+.toast.show { transform: translateY(0); }
+</style>
 </head>
 <body>
+<header>
+    <div class="logo-group">
+        <div class="logo-icon"><i data-lucide="eye" style="width:1.1rem;height:1.1rem;"></i></div>
+        <div class="logo-text"><h1>urGlance</h1><span>Instant File Preview</span></div>
+    </div>
+    <div class="status-badge" id="status-badge">
+        <div class="status-dot"></div>
+        <span id="status-text">Active</span>
+    </div>
+</header>
 
-    <!-- Header bar -->
-    <header>
-        <div class="logo-group">
-            <div class="logo-icon">
-                <i data-lucide="eye" style="width: 1.25rem; height: 1.25rem;"></i>
-            </div>
-            <div class="logo-text">
-                <h1>urGlance</h1>
-                <span>Background Preview Engine</span>
-            </div>
+<div class="workspace">
+    <!-- File Browser -->
+    <div class="explorer-panel">
+        <div class="path-navigation">
+            <button class="nav-btn" id="btn-back" title="Go up"><i data-lucide="chevron-up" style="width:1rem;height:1rem;"></i></button>
+            <div class="path-input-wrapper"><input type="text" class="path-input" id="input-path" placeholder="Path..."></div>
         </div>
-
-        <div class="system-status">
-            <div class="status-badge" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); color: #a78bfa;">
-                <i data-lucide="monitor" style="width: 12px; height: 12px;"></i>
-                <span>Win & Linux Only</span>
-            </div>
-            <div class="status-badge">
-                <div class="status-dot"></div>
-                <span>Agent Active</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Workspace -->
-    <div class="workspace">
-        <!-- Left Side: Local File Browser -->
-        <div class="explorer-panel">
-            <div class="path-navigation">
-                <button class="nav-btn" id="btn-back" title="Go up one folder">
-                    <i data-lucide="chevron-up" style="width: 1.1rem; height: 1.1rem;"></i>
-                </button>
-                <div class="path-input-wrapper">
-                    <input type="text" class="path-input" id="input-path" placeholder="Enter path...">
-                </div>
-            </div>
-
-            <div class="file-list-container" id="file-list">
-                <!-- Dynamically loaded files -->
-            </div>
-        </div>
-
-        <!-- Right Side: Side Preview Panel -->
-        <div class="preview-panel">
-            <div class="preview-header">
-                <span class="preview-title">Real-Time Preview</span>
-                <i data-lucide="info" style="width: 1rem; height: 1rem; color: var(--text-muted);"></i>
-            </div>
-
-            <div class="preview-content" id="preview-panel-content">
-                <div class="empty-preview-state" id="preview-empty">
-                    <div class="empty-preview-icon">
-                        <i data-lucide="sparkles" style="width: 1.75rem; height: 1.75rem;"></i>
-                    </div>
-                    <div>
-                        <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">No File Hovered</h3>
-                        <p style="font-size: 0.75rem; max-width: 250px;">Hover or tap any file in the explorer panel to trigger instant background parsing.</p>
-                    </div>
-                </div>
-
-                <div id="preview-data-display" style="display: none; height: 100%; flex-direction: column; gap: 1.25rem;">
-                    <div>
-                        <h2 id="preview-filename" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; word-break: break-all;">file_name.txt</h2>
-                        <div class="file-badge-container" id="preview-badges">
-                            <!-- Badges injected dynamically -->
-                        </div>
-                    </div>
-
-                    <div class="snippet-card">
-                        <div class="snippet-header">
-                            <span id="snippet-header-title">File Content Snippet</span>
-                            <i data-lucide="code" style="width: 0.9rem; height: 0.9rem;"></i>
-                        </div>
-                        <pre class="snippet-body" id="preview-snippet">Content goes here...</pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Autostart Settings -->
-            <div class="settings-footer">
-                <div class="settings-group">
-                    <i data-lucide="settings" style="width: 1rem; height: 1rem; color: var(--text-muted);"></i>
-                    <span>Run as startup application</span>
-                </div>
-                <div class="settings-group">
-                    <label class="switch">
-                        <input type="checkbox" id="toggle-startup">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-        </div>
+        <div class="file-list-container" id="file-list"></div>
     </div>
 
-    <!-- Notification Toast -->
-    <div class="toast" id="toast">
-        <i data-lucide="check-circle" style="width: 1.1rem; height: 1.1rem; color: var(--success);" id="toast-icon"></i>
-        <span id="toast-msg">Settings saved!</span>
+    <!-- Preview Panel -->
+    <div class="preview-panel">
+        <div class="preview-header">
+            <span class="preview-title">Preview</span>
+            <i data-lucide="info" style="width:0.9rem;height:0.9rem;color:var(--muted);"></i>
+        </div>
+        <div class="preview-content" id="preview-panel-content">
+            <div class="empty-preview-state" id="preview-empty">
+                <div class="empty-preview-icon"><i data-lucide="sparkles" style="width:1.5rem;height:1.5rem;"></i></div>
+                <div>
+                    <h3 style="font-size:0.85rem;font-weight:600;margin-bottom:0.2rem;">No File Selected</h3>
+                    <p style="font-size:0.72rem;max-width:240px;">Click or hover a file in the browser to see its preview here.</p>
+                </div>
+            </div>
+
+            <div id="preview-data-display" style="display:none;height:100%;flex-direction:column;gap:1rem;">
+                <div>
+                    <h2 id="preview-filename" style="font-size:1rem;font-weight:700;margin-bottom:0.4rem;word-break:break-all;"></h2>
+                    <div class="file-badge-container" id="preview-badges"></div>
+                </div>
+
+                <div id="preview-image-container" style="display:none;" class="preview-image-wrapper">
+                    <img id="preview-image" src="" alt="Preview">
+                </div>
+
+                <div class="snippet-card">
+                    <div class="snippet-header">
+                        <span id="snippet-header-title">Content</span>
+                        <i data-lucide="code" style="width:0.85rem;height:0.85rem;"></i>
+                    </div>
+                    <pre class="snippet-body" id="preview-snippet">Loading...</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-footer">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+                <i data-lucide="settings" style="width:0.9rem;height:0.9rem;color:var(--muted);"></i>
+                <span>Startup</span>
+            </div>
+            <label class="switch"><input type="checkbox" id="toggle-startup"><span class="slider"></span></label>
+        </div>
     </div>
+</div>
 
-    <script>
-        const fileList = document.getElementById('file-list');
-        const inputPath = document.getElementById('input-path');
-        const btnBack = document.getElementById('btn-back');
-        
-        const previewEmpty = document.getElementById('preview-empty');
-        const previewDisplay = document.getElementById('preview-data-display');
-        const previewFilename = document.getElementById('preview-filename');
-        const previewBadges = document.getElementById('preview-badges');
-        const previewSnippet = document.getElementById('preview-snippet');
-        const snippetHeaderTitle = document.getElementById('snippet-header-title');
-        
-        const toggleStartup = document.getElementById('toggle-startup');
-        const toast = document.getElementById('toast');
-        const toastMsg = document.getElementById('toast-msg');
+<div class="toast" id="toast">
+    <i data-lucide="check-circle" style="width:1rem;height:1rem;color:var(--success);" id="toast-icon"></i>
+    <span id="toast-msg"></span>
+</div>
 
-        let currentPath = "";
-        let abortController = null;
+<script>
+const fileList = document.getElementById('file-list');
+const inputPath = document.getElementById('input-path');
+const btnBack = document.getElementById('btn-back');
+const previewEmpty = document.getElementById('preview-empty');
+const previewDisplay = document.getElementById('preview-data-display');
+const previewFilename = document.getElementById('preview-filename');
+const previewBadges = document.getElementById('preview-badges');
+const previewSnippet = document.getElementById('preview-snippet');
+const snippetHeaderTitle = document.getElementById('snippet-header-title');
+const previewImageContainer = document.getElementById('preview-image-container');
+const previewImage = document.getElementById('preview-image');
+const toggleStartup = document.getElementById('toggle-startup');
+const toast = document.getElementById('toast');
+const toastMsg = document.getElementById('toast-msg');
+const statusText = document.getElementById('status-text');
 
-        // Display notifications
-        function showNotification(msg, isSuccess = true) {
-            toastMsg.textContent = msg;
-            const icon = document.getElementById('toast-icon');
-            if (isSuccess) {
-                icon.style.color = 'var(--success)';
-                icon.setAttribute('data-lucide', 'check-circle');
-            } else {
-                icon.style.color = 'var(--error)';
-                icon.setAttribute('data-lucide', 'alert-triangle');
-            }
-            lucide.createIcons();
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
+let currentPath = "";
+let abortController = null;
 
-        // Fetch files for a given path
-        async function fetchFiles(path) {
-            try {
-                const response = await fetch(`/api/files?path=${encodeURIComponent(path)}`);
-                if (!response.ok) throw new Error(await response.text());
-                
-                const data = await response.json();
-                currentPath = data.current_path;
-                inputPath.value = currentPath;
-                renderFileList(data.entries);
-            } catch (err) {
-                showNotification(`Failed to load folder: ${err.message}`, false);
-            }
-        }
+function showNotification(msg, isSuccess = true) {
+    toastMsg.textContent = msg;
+    const icon = document.getElementById('toast-icon');
+    icon.style.color = isSuccess ? 'var(--success)' : 'var(--error)';
+    icon.setAttribute('data-lucide', isSuccess ? 'check-circle' : 'alert-triangle');
+    lucide.createIcons();
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
 
-        // Render file explorer list
-        function renderFileList(entries) {
-            fileList.innerHTML = "";
-            if (entries.length === 0) {
-                fileList.innerHTML = `
-                    <div style="text-align: center; color: var(--text-muted); padding: 2rem; font-size: 0.85rem;">
-                        Empty directory
-                    </div>`;
-                return;
-            }
+async function fetchFiles(path) {
+    try {
+        const resp = await fetch(`/api/files?path=${encodeURIComponent(path)}`);
+        if (!resp.ok) throw new Error(await resp.text());
+        const data = await resp.json();
+        currentPath = data.current_path;
+        inputPath.value = currentPath;
+        renderFileList(data.entries);
+    } catch (e) { showNotification(`Failed: ${e.message}`, false); }
+}
 
-            entries.forEach(entry => {
-                const item = document.createElement('div');
-                item.className = 'file-item';
-                
-                const iconName = entry.is_dir ? 'folder' : getFileIcon(entry.name);
-                
-                item.innerHTML = `
-                    <div class="file-icon">
-                        <i data-lucide="${iconName}" style="width: 1.15rem; height: 1.15rem;"></i>
-                    </div>
-                    <div class="file-info">
-                        <div class="file-name">${entry.name}</div>
-                        <div class="file-meta-sub">${entry.is_dir ? 'Folder' : formatBytes(entry.size)}</div>
-                    </div>
-                `;
+function renderFileList(entries) {
+    fileList.innerHTML = "";
+    if (!entries.length) {
+        fileList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:0.8rem;">Empty directory</div>';
+        return;
+    }
+    entries.forEach(entry => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        const icon = entry.is_dir ? 'folder' : getIcon(entry.name);
+        item.innerHTML = `
+            <div class="file-icon"><i data-lucide="${icon}" style="width:1.1rem;height:1.1rem;"></i></div>
+            <div class="file-info">
+                <div class="file-name">${escHtml(entry.name)}</div>
+                <div class="file-meta-sub">${entry.is_dir ? 'Folder' : fmtSize(entry.size)}</div>
+            </div>`;
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            entry.is_dir ? fetchFiles(entry.path) : triggerPreview(entry.path, entry.name);
+        });
+        item.addEventListener('mouseenter', () => { if (!entry.is_dir) triggerPreview(entry.path, entry.name); });
+        fileList.appendChild(item);
+    });
+    lucide.createIcons();
+}
 
-                // Single-tap / click navigates folders or activates file preview
-                item.addEventListener('click', (e) => {
-                    document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
-                    item.classList.add('active');
-                    if (entry.is_dir) {
-                        fetchFiles(entry.path);
-                    } else {
-                        triggerPreview(entry.path, entry.name);
-                    }
-                });
+let previewTimeout = null;
+async function triggerPreview(path, name) {
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
+    const signal = abortController.signal;
 
-                // Hover triggers preview
-                item.addEventListener('mouseenter', () => {
-                    if (!entry.is_dir) {
-                        triggerPreview(entry.path, entry.name);
-                    }
-                });
+    previewEmpty.style.display = 'none';
+    previewDisplay.style.display = 'flex';
+    previewFilename.textContent = name;
+    previewSnippet.textContent = "Loading...";
+    previewSnippet.className = 'snippet-body';
+    snippetHeaderTitle.textContent = "Extracting preview...";
+    previewBadges.innerHTML = '';
+    previewImageContainer.style.display = 'none';
 
-                fileList.appendChild(item);
+    try {
+        const resp = await fetch(`/api/preview?path=${encodeURIComponent(path)}`, { signal });
+        if (!resp.ok) throw new Error(await resp.text());
+        const data = await resp.json();
+
+        let badgesHTML = `<div class="file-badge type"><i data-lucide="tag" style="width:0.75rem;height:0.75rem;"></i><span>${escHtml(data.file_type)}</span></div>`;
+        if (data.metadata_summary && data.metadata_summary !== "N/A") {
+            data.metadata_summary.split(' | ').forEach(part => {
+                const icon = part.startsWith('Size:') ? 'hard-drive' : part.startsWith('Modified:') ? 'calendar' : 'key';
+                badgesHTML += `<div class="file-badge"><i data-lucide="${icon}" style="width:0.75rem;height:0.75rem;"></i><span>${escHtml(part)}</span></div>`;
             });
-            lucide.createIcons();
         }
-
-        // Trigger debounced file preview (cancels previous running requests)
-        async function triggerPreview(path, name) {
-            // Cancel any pending fetch request
-            if (abortController) {
-                abortController.abort();
-            }
-
-            abortController = new AbortController();
-            const signal = abortController.signal;
-
-            // Instantly update UI header (non-blocking)
-            previewEmpty.style.display = 'none';
-            previewDisplay.style.display = 'flex';
-            previewFilename.textContent = name;
-            previewSnippet.textContent = "Loading preview...";
-            previewSnippet.className = 'snippet-body';
-            snippetHeaderTitle.textContent = "Extracting preview...";
-            previewBadges.innerHTML = "";
-
-            try {
-                const response = await fetch(`/api/preview?path=${encodeURIComponent(path)}`, { signal });
-                if (!response.ok) throw new Error(await response.text());
-                
-                const data = await response.json();
-                
-                // Render metadata tags
-                let badgesHTML = `
-                    <div class="file-badge type">
-                        <i data-lucide="tag" style="width: 0.8rem; height: 0.8rem;"></i>
-                        <span>${data.file_type}</span>
-                    </div>
-                `;
-                
-                if (data.metadata_summary !== "N/A") {
-                    const parts = data.metadata_summary.split(' | ');
-                    parts.forEach(part => {
-                        const icon = part.startsWith("Size:") ? 'hard-drive' : 
-                                     part.startsWith("Dimensions:") ? 'image' : 
-                                     part.startsWith("Modified:") ? 'calendar' : 'key';
-                        
-                        badgesHTML += `
-                            <div class="file-badge">
-                                <i data-lucide="${icon}" style="width: 0.8rem; height: 0.8rem;"></i>
-                                <span>${part}</span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                previewBadges.innerHTML = badgesHTML;
-                lucide.createIcons();
-
-                // Render content snippet
-                if (data.file_type.includes("Image") || data.file_type.includes("Binary")) {
-                    previewSnippet.className = 'snippet-body binary';
-                    const icon = data.file_type.includes("Image") ? 'image' : 'file-warning';
-                    previewSnippet.innerHTML = `
-                        <i data-lucide="${icon}" style="width: 2rem; height: 2rem; color: var(--text-dark);"></i>
-                        <span>${data.content_snippet}</span>
-                    `;
-                } else {
-                    previewSnippet.textContent = data.content_snippet;
-                }
-                
-                snippetHeaderTitle.textContent = data.success ? "Preview Extract Successful" : "Preview Extract Failed";
-                lucide.createIcons();
-
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    previewSnippet.textContent = `[Failed to load preview: ${err.message}]`;
-                    snippetHeaderTitle.textContent = "Error";
-                }
-            }
-        }
-
-        // Helper icons mapping
-        function getFileIcon(name) {
-            const ext = name.split('.').pop().toLowerCase();
-            if (['png', 'jpg', 'jpeg', 'bmp', 'gif', 'svg'].includes(ext)) return 'image';
-            if (['txt', 'md', 'toml', 'json', 'csv'].includes(ext)) return 'file-text';
-            if (['py', 'cpp', 'h', 'rs', 'js', 'html', 'css', 'go', 'sh', 'bat'].includes(ext)) return 'code-2';
-            return 'file';
-        }
-
-        // Format raw bytes
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        // Initialize settings status from backend
-        async function initStatus() {
-            try {
-                const response = await fetch('/api/status');
-                const data = await response.json();
-                toggleStartup.checked = data.startup_enabled;
-                fetchFiles(data.current_path);
-            } catch (err) {
-                console.error("Failed to load init status", err);
-                fetchFiles(".");
-            }
-        }
-
-        // Handle navigation up directory tree
-        btnBack.addEventListener('click', () => {
-            if (!currentPath) return;
-            const parts = currentPath.split(/[\/\\]/);
-            if (parts.length <= 1) return;
-            parts.pop();
-            const parent = parts.join('/') || '/';
-            fetchFiles(parent);
-        });
-
-        // Handle manual path navigation
-        inputPath.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                fetchFiles(inputPath.value.trim());
-            }
-        });
-
-        // Handle startup toggle changes
-        toggleStartup.addEventListener('change', async () => {
-            const enable = toggleStartup.checked;
-            try {
-                const response = await fetch(`/api/startup?enable=${enable}`, { method: 'POST' });
-                if (!response.ok) throw new Error(await response.text());
-                
-                showNotification(enable ? "Successfully registered startup application!" : "Startup application unregistered.");
-            } catch (err) {
-                toggleStartup.checked = !enable;
-                showNotification(`Settings change failed: ${err.message}`, false);
-            }
-        });
-
-        // Initialize icons and load status
+        previewBadges.innerHTML = badgesHTML;
         lucide.createIcons();
-        initStatus();
-    </script>
+
+        previewSnippet.className = 'snippet-body';
+        if (data.file_type && (data.file_type.includes('Image') || data.file_type.includes('Binary') || data.file_type.includes('Audio') || data.file_type.includes('Video'))) {
+            if (data.file_type.includes('Audio') || data.file_type.includes('Video')) {
+                previewSnippet.className = 'snippet-body binary';
+                const icon = data.file_type.includes('Audio') ? 'music' : 'video';
+                previewSnippet.innerHTML = `<i data-lucide="${icon}" style="width:2rem;height:2rem;color:#4b5563;"></i><span>${escHtml(data.content_snippet)}</span>`;
+            }
+        } else {
+            previewSnippet.textContent = data.content_snippet;
+        }
+
+        snippetHeaderTitle.textContent = data.success ? "Preview Ready" : "Preview Failed";
+        lucide.createIcons();
+    } catch (e) {
+        if (e.name !== 'AbortError') {
+            previewSnippet.textContent = `[Error: ${e.message}]`;
+            snippetHeaderTitle.textContent = "Error";
+        }
+    }
+}
+
+function getIcon(name) {
+    const ext = (name.split('.').pop() || '').toLowerCase();
+    if (['png','jpg','jpeg','bmp','gif','svg','webp'].includes(ext)) return 'image';
+    if (['txt','md','toml','json','csv','yaml','yml'].includes(ext)) return 'file-text';
+    if (['py','cpp','h','rs','js','ts','html','css','go','sh','bat','c','hpp','cc'].includes(ext)) return 'code-2';
+    if (['mp3','flac','wav','ogg','aac'].includes(ext)) return 'music';
+    if (['mp4','avi','mkv','mov','webm'].includes(ext)) return 'video';
+    if (['pdf'].includes(ext)) return 'file-text';
+    if (['doc','docx','xls','xlsx'].includes(ext)) return 'file';
+    return 'file';
+}
+function fmtSize(b) {
+    if (!b) return '0 Bytes';
+    const k = 1024, s = ['Bytes','KB','MB','GB'], i = Math.floor(Math.log(b)/Math.log(k));
+    return parseFloat((b/Math.pow(k,i)).toFixed(1))+' '+s[i];
+}
+function escHtml(s) { return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+btnBack.addEventListener('click', () => {
+    if (!currentPath) return;
+    const p = currentPath.replace(/[\\/]+$/, '').split(/[\\/]/);
+    p.pop();
+    fetchFiles(p.join('/') || '/');
+});
+inputPath.addEventListener('keydown', e => { if (e.key === 'Enter') fetchFiles(inputPath.value.trim()); });
+toggleStartup.addEventListener('change', async () => {
+    try {
+        const resp = await fetch(`/api/startup?enable=${toggleStartup.checked}`, { method:'POST' });
+        if (!resp.ok) throw new Error(await resp.text());
+        showNotification(toggleStartup.checked ? 'Startup enabled' : 'Startup disabled');
+    } catch (e) { toggleStartup.checked = !toggleStartup.checked; showNotification(e.message, false); }
+});
+
+lucide.createIcons();
+(async () => {
+    try {
+        const resp = await fetch('/api/status');
+        const data = await resp.json();
+        toggleStartup.checked = data.startup_enabled;
+        fetchFiles(data.current_path);
+    } catch (_) { fetchFiles('.'); }
+})();
+
+// Listen for preview image updates via Server-Sent Events or polling
+// For now, the image preview comes from the preview data
+</script>
 </body>
 </html>

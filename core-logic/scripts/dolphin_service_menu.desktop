@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all
+Actions=previewWithUrGlance
+
+[Desktop Action previewWithUrGlance]
+Name=Preview with urGlance
+Icon=image-x-generic
+Exec=urglance-preview.sh %f

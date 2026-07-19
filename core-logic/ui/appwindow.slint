@@ -1,4 +1,4 @@
-import { CheckBox, ScrollView, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { CheckBox, ScrollView, VerticalBox, HorizontalBox, Button } from "std-widgets.slint";
 
 export struct PreviewRecord {
     file_path: string,
@@ -8,33 +8,70 @@ export struct PreviewRecord {
 
 export component AppWindow inherits Window {
     title: "urGlance Control Panel";
-    width: 600px;
-    height: 500px;
-    background: #ffffff;
-    
+    width: 680px;
+    height: 520px;
+    background: #0f1117;
+
     in property <bool> startup_enabled: false;
     in property <[PreviewRecord]> preview_history: [];
-    
+    in property <string> status_text: "Starting...";
+
     callback toggle_startup(bool);
+    callback open_dashboard();
 
     VerticalBox {
         padding: 24px;
         spacing: 16px;
 
-        Text {
-            text: "urGlance Background Service";
-            font-size: 24px;
-            font-weight: 700;
-            color: #333333;
-        }
-        
+        // Header
         HorizontalBox {
-            spacing: 8px;
+            spacing: 12px;
+
+            Rectangle {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #8b5cf6, #ec4899);
+
+                Text {
+                    text: "U";
+                    color: white;
+                    font-size: 20px;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                    horizontal-alignment: center;
+                }
+            }
+
+            VerticalBox {
+                spacing: 2px;
+                Text {
+                    text: "urGlance Background Service";
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #f3f4f6;
+                }
+                Text {
+                    text: root.status_text;
+                    font-size: 13px;
+                    color: #10b981;
+                }
+            }
+        }
+
+        Rectangle {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        // Settings row
+        HorizontalBox {
+            spacing: 12px;
             Text {
                 text: "Run on System Startup:";
                 vertical-alignment: center;
-                font-size: 16px;
-                color: #555555;
+                font-size: 14px;
+                color: #d1d5db;
             }
             CheckBox {
                 checked: root.startup_enabled;
@@ -42,57 +79,75 @@ export component AppWindow inherits Window {
                     root.toggle_startup(self.checked);
                 }
             }
+
+            HorizontalLayout {
+                stretch: 1;
+            }
+
+            Button {
+                text: "Open Dashboard";
+                background: #8b5cf6;
+                color: white;
+                border-radius: 8px;
+                min-width: 140px;
+                clicked => {
+                    root.open_dashboard();
+                }
+            }
         }
-        
+
         Rectangle {
             height: 1px;
-            background: #e0e0e0;
+            background: rgba(255, 255, 255, 0.06);
         }
 
         Text {
             text: "Recent Previews:";
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            color: #444444;
+            color: #e5e7eb;
         }
 
         ScrollView {
+            stretch: 1;
+
             VerticalBox {
-                spacing: 12px;
+                spacing: 8px;
                 for record in root.preview_history : Rectangle {
-                    background: #f8f9fa;
+                    background: rgba(255, 255, 255, 0.03);
                     border-radius: 8px;
-                    border-color: #e9ecef;
+                    border-color: rgba(255, 255, 255, 0.06);
                     border-width: 1px;
-                    
+
                     VerticalBox {
                         padding: 12px;
                         spacing: 4px;
-                        
+
                         Text {
                             text: record.file_path;
                             font-weight: 600;
-                            font-size: 14px;
-                            color: #212529;
+                            font-size: 13px;
+                            color: #f3f4f6;
                             overflow: elide;
                         }
                         Text {
                             text: record.file_type;
-                            color: #6c757d;
-                            font-size: 12px;
+                            color: #a78bfa;
+                            font-size: 11px;
                         }
                         Text {
                             text: record.snippet;
                             wrap: word-wrap;
-                            color: #495057;
-                            font-size: 13px;
+                            color: #9ca3af;
+                            font-size: 12px;
+                            max-lines: 3;
                         }
                     }
                 }
-                
+
                 if root.preview_history.length == 0 : Text {
-                    text: "No previews yet. Hover over files to see them here.";
-                    color: #999999;
+                    text: "No previews yet. Hover over files or use the dashboard to see them here.";
+                    color: #6b7280;
                     font-italic: true;
                     horizontal-alignment: center;
                 }

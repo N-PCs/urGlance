@@ -1,0 +1,13 @@
+[Unit]
+Description=urGlance File Preview Daemon
+Documentation=https://github.com/N-PCs/urGlance
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/urglance
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

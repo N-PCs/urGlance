@@ -1,30 +1,21 @@
 # urGlance
 
-A high-performance, responsive utility designed to provide lightning-fast file previews and seamless system integration.
+Instant file preview for Linux & Windows. **Select any file in your file manager** and a floating preview popup appears instantly — showing text content, image thumbnails, metadata, and more.
 
 ## Features
-- **Instant Previews**: Fast file lookups and preview extraction via a background daemon.
-- **Native GUI Control Panel**: A fast, cross-platform UI built in Rust using Slint. View your file preview history and manage system autostart.
-- **High Performance**: Built with optimization and low latency in mind.
 
-## Platform Support
-- **Windows** (Native or via MSYS2/MinGW)
-- **Linux** (Any modern distribution)
-*(Note: macOS is not supported.)*
+- **Floating Preview Popup**: Select a file in Nautilus/Dolphin/Thunar/Explorer → a frameless GTK overlay shows its content
+- **Image Thumbnails**: Generates JPEG thumbnails up to 800px for PNG, JPEG, GIF, BMP, WebP — displayed directly in the popup
+- **Text & Code Preview**: Shows up to 30 lines / 4KB of any text or source file
+- **Desktop Integration**: Nautilus extension auto-triggers on file selection, Dolphin/Thunar service menus, Windows Explorer script
+- **Web Dashboard**: Built-in file browser at `http://127.0.0.1:8080` as a fallback
+- **Background Daemon**: Pure Rust backend, systemd user service, low resource usage
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-- Git
-- Rust (Edition 2021)
-- C++17 compatible compiler (MSVC, GCC, or Clang)
-- Node.js & npm (for web frontend fallback)
-
-### Installation
 ```bash
-git clone https://github.com/N-PCs/urGlance.git
-cd urGlance/core-logic
-cargo run --release
-```
+cd core-logic
+cargo build --release
+bash scripts/install.sh    # Installs daemon + overlay + file manager plugins
 
-Made by @N-PCs for the world!
+# Or just run manually:

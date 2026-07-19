@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Preview with urGlance
+Comment=Preview file with urGlance instant preview
+Icon=image-x-generic
+Exec=urglance-preview.sh %f
+TargetLocation=Directories
+NoDisplay=false
+Categories=Utility;
+MimeType=inode/directory;

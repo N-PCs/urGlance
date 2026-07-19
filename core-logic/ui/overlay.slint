@@ -1,0 +1,125 @@
+export component PreviewOverlay inherits Window {
+    no-frame: true;
+    width: 540px;
+    height: 400px;
+    background: rgba(12, 14, 22, 0.92);
+
+    in property <string> file_path: "";
+    in property <string> file_type: "";
+    in property <string> content_snippet: "";
+    in property <string> metadata_summary: "";
+    in property <string> preview_image_b64: "";
+    in property <bool> has_image: false;
+
+    callback close_overlay();
+
+    // Background with border glow
+    Rectangle {
+        width: 100%;
+        height: 100%;
+        border-radius: 14px;
+        border-width: 1px;
+        border-color: rgba(139, 92, 246, 0.25);
+        background: rgba(12, 14, 22, 0.92);
+
+        VerticalLayout {
+            padding: 18px;
+            spacing: 6px;
+
+            // Header row
+            HorizontalLayout {
+                spacing: 8px;
+
+                Rectangle {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 5px;
+                    background: #8b5cf6;
+                    vertical-alignment: center;
+                }
+
+                Text {
+                    text: root.file_path;
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #f3f4f6;
+                    overflow: elide;
+                    vertical-alignment: center;
+                    stretch: 1;
+                }
+
+                TouchArea {
+                    clicked => { root.close_overlay(); }
+                    Rectangle {
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 6px;
+                        background: rgba(255, 255, 255, 0.06);
+                        Text {
+                            text: "✕";
+                            color: #9ca3af;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                            horizontal-alignment: center;
+                        }
+                    }
+                }
+            }
+
+            // File type badge
+            Text {
+                text: root.file_type;
+                font-size: 11px;
+                color: #a78bfa;
+                font-weight: 600;
+            }
+
+            // Metadata
+            Text {
+                text: root.metadata_summary;
+                font-size: 11px;
+                color: #9ca3af;
+                wrap: word-wrap;
+                max-lines: 2;
+            }
+
+            Rectangle {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.06);
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+
+            // Image preview
+            if root.has_image : Image {
+                source: root.preview_image_b64;
+                width: min(480px, parent.width - 36px);
+                height: 200px;
+                stretch: uniform;
+                margin: 4px;
+            }
+
+            // Content snippet
+            ScrollView {
+                stretch: 1;
+                VerticalLayout {
+                    Text {
+                        text: root.content_snippet;
+                        font-size: 12px;
+                        color: #d1d5db;
+                        wrap: word-wrap;
+                        font-family: "monospace";
+                    }
+                }
+            }
+        }
+    }
+
+    key-pressed(event) => {
+        if event.code == KeyCode.Escape {
+            root.close_overlay();
+            return accept;
+        }
+        return reject;
+    }
+}
